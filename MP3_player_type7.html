@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MP3プレイヤー</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #4a3728 0%, #3d2817 50%, #52402d 100%);
+            background-attachment: fixed;
+            color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            height: 100vh;
+            margin: 3%;
+            transition: background 0.3s, color 0.3s;
+        }
+        body.dark-mode {
+            background-color: #0f1419;
+            color: #e0e0e0;
+        }
+        .container {
+            background: #6a8aaa;
+            padding: 50px;
+            border-radius: 10px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 800px;
+            text-align: center;
+            transition: background-color 0.3s;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        body.dark-mode .container {
+            background: #1a1f2e;
+            border: 1px solid rgba(0, 212, 255, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 212, 255, 0.1);
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        h2 {
+            margin: 0;
+            font-size: 2rem;
+            font-weight: bold;
+            color: #5babed;
+            padding: 15px 30px;
+            background: linear-gradient(135deg, #7a9abb 0%, #6a8aaa 50%, #7a9abb 100%);
+            border: 2px solid #4f88ab;
+            border-radius: 10px;
+            box-shadow: 
+                inset 0 1px 0 rgba(255, 255, 255, 0.2),
+                inset 0 -2px 5px rgba(0, 0, 0, 0.5),
+                0 8px 16px rgba(0, 212, 255, 0.3),
+                0 4px 8px rgba(0, 0, 0, 0.4);
+            text-shadow: 
+                2px 2px 0px rgba(0, 0, 0, 0.8),
+                3px 3px 0px rgba(0, 212, 255, 0.5),
+                4px 4px 8px rgba(0, 0, 0, 0.6);
+            letter-spacing: 1px;
+            transform: perspective(1000px) rotateX(0deg);
+            transition: all 0.3s ease;
+        }
+        h2:hover {
+            box-shadow: 
+                inset 0 1px 0 rgba(255, 255, 255, 0.3),
+                inset 0 -2px 5px rgba(0, 0, 0, 0.5),
+                0 12px 24px rgba(0, 212, 255, 0.4),
+                0 6px 12px rgba(0, 0, 0, 0.5);
+            transform: perspective(1000px) rotateX(-2deg) translateY(-2px);
+        }
+        body.dark-mode h2 {
+            color: #00d4ff;
+            border-color: #00d4ff;
+            box-shadow: 
+                inset 0 1px 0 rgba(255, 255, 255, 0.2),
+                inset 0 -2px 5px rgba(0, 0, 0, 0.5),
+                0 8px 16px rgba(0, 184, 230, 0.3),
+                0 4px 8px rgba(0, 0, 0, 0.4);
+            text-shadow: 
+                2px 2px 0px rgba(0, 0, 0, 0.8),
+                3px 3px 0px rgba(0, 184, 230, 0.5),
+                4px 4px 8px rgba(0, 0, 0, 0.6);
+        }
+        body.dark-mode h2:hover {
+            box-shadow: 
+                inset 0 1px 0 rgba(255, 255, 255, 0.3),
+                inset 0 -2px 5px rgba(0, 0, 0, 0.5),
+                0 12px 24px rgba(0, 184, 230, 0.4),
+                0 6px 12px rgba(0, 0, 0, 0.5);
+        }
+        .toggle-switch-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        #darkModeToggle {
+            cursor: pointer;
+            position: relative;
+            width: 60px;
+            height: 100px;
+            background: linear-gradient(135deg, #7a9abb 0%, #6a8aaa 100%);
+            border: 2px solid #ffffff;
+            border-radius: 30px;
+            box-shadow: 
+                inset 0 1px 3px rgba(255, 255, 255, 0.1),
+                inset 0 -1px 3px rgba(0, 0, 0, 0.3),
+                0 4px 12px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            overflow: hidden;
+        }
+        
+        #darkModeToggle:hover {
+            box-shadow: 
+                inset 0 1px 3px rgba(255, 255, 255, 0.2),
+                inset 0 -1px 3px rgba(0, 0, 0, 0.4),
+                0 8px 16px rgba(0, 0, 0, 0.4);
+            transform: scale(1.05);
+        }
+        
+        .toggle-track {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .toggle-thumb {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #ffffff 0%, #f0f0f0 100%);
+            border-radius: 50%;
+            box-shadow: 
+                inset 0 1px 2px rgba(255, 255, 255, 0.5),
+                0 4px 12px rgba(41, 121, 196, 0.3);
+            position: absolute;
+            top: 6px;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+        
+        /* ダークモード時 */
+        body.dark-mode #darkModeToggle {
+            border-color: #00b8e6;
+            background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);
+            box-shadow: 
+                inset 0 2px 5px rgba(255, 255, 255, 0.1),
+                inset 0 -2px 5px rgba(0, 0, 0, 0.5),
+                0 8px 16px rgba(0, 184, 230, 0.2),
+                0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+        
+        body.dark-mode #darkModeToggle:hover {
+            box-shadow: 
+                inset 0 2px 5px rgba(255, 255, 255, 0.1),
+                inset 0 -2px 5px rgba(0, 0, 0, 0.5),
+                0 12px 20px rgba(0, 184, 230, 0.3),
+                0 6px 12px rgba(0, 0, 0, 0.4);
+        }
+        
+        body.dark-mode .toggle-thumb {
+            background: linear-gradient(135deg, #00d4ff 0%, #00b8e6 100%);
+            box-shadow: 
+                inset 0 1px 2px rgba(255, 255, 255, 0.3),
+                0 4px 12px rgba(0, 184, 230, 0.4),
+                0 2px 4px rgba(0, 0, 0, 0.3);
+            border-color: rgba(0, 184, 230, 0.5);
+        }
+        
+        /* スイッチが下に移動（ダークモード） */
+        body.dark-mode .toggle-thumb {
+            top: 46px;
+        }
+        
+        .toggle-label {
+            position: absolute;
+            font-size: 1.2rem;
+            opacity: 0.6;
+            transition: all 0.4s ease;
+            pointer-events: none;
+        }
+        
+        .light-label {
+            top: 8px;
+            opacity: 1;
+        }
+        
+        .dark-label {
+            bottom: 8px;
+            opacity: 0.4;
+        }
+        
+        body.dark-mode .light-label {
+            opacity: 0.4;
+        }
+        
+        body.dark-mode .dark-label {
+            opacity: 1;
+        }
+        
+        .toggle-status {
+            font-size: 0.8rem;
+            font-weight: bold;
+            color: #ffffff;
+            text-align: center;
+            letter-spacing: 0.5px;
+            height: 20px;
+            transition: color 0.3s ease;
+        }
+        
+        body.dark-mode .toggle-status {
+            color: #00b8e6;
+        }
+        #volumeControl {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 60px;
+            padding: 15px 10px;
+            background: linear-gradient(135deg, #7a9abb 0%, #6a8aaa 100%);
+            border-radius: 8px;
+            box-shadow: inset 0 1px 3px rgba(255, 255, 255, 0.2), 0 2px 8px rgba(0, 0, 0, 0.2);
+            border: 1px solid #ffffff;
+        }
+        body.dark-mode #volumeControl {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+            border: 1px solid #00d4ff;
+        }
+        .volume-slider {
+            -webkit-appearance: slider-vertical;
+            appearance: slider-vertical;
+            width: 8px;
+            height: 120px;
+            background: linear-gradient(to bottom, #ffffff, #e0e0e0);
+            border-radius: 4px;
+            outline: none;
+            cursor: grab;
+            transition: all 0.3s;
+            box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.3), 0 2px 6px rgba(0, 0, 0, 0.2);
+            border: 1px solid #d0d0d0;
+        }
+        .volume-slider:hover {
+            background: linear-gradient(to bottom, #ffffff, #f0f0f0);
+            box-shadow: inset 0 1px 3px rgba(255, 255, 255, 0.3), 0 3px 6px rgba(0, 0, 0, 0.5);
+        }
+        .volume-slider:active {
+            cursor: grabbing;
+        }
+        .volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            background: linear-gradient(135deg, #00f0ff, #00d4ff);
+            border-radius: 50%;
+            cursor: grab;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4), inset 0 1px 2px rgba(255, 255, 255, 0.3);
+            border: 2px solid #0088aa;
+        }
+        .volume-slider::-webkit-slider-thumb:active {
+            cursor: grabbing;
+        }
+        .volume-slider::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            background: linear-gradient(135deg, #00f0ff, #00d4ff);
+            border-radius: 50%;
+            cursor: grab;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4), inset 0 1px 2px rgba(255, 255, 255, 0.3);
+            border: 2px solid #0088aa;
+        }
+        .volume-slider::-moz-range-thumb:active {
+            cursor: grabbing;
+        }
+        body.dark-mode .volume-slider {
+            background: linear-gradient(to bottom, #00b8e6, #0088cc);
+            border: 1px solid #0077aa;
+        }
+        body.dark-mode .volume-slider:hover {
+            background: linear-gradient(to bottom, #00d4ff, #0099dd);
+        }
+        .volume-indicator {
+            font-size: 0.75rem;
+            color: #e8e8e8;
+            font-weight: bold;
+            text-align: center;
+            letter-spacing: 0.5px;
+        }
+        body.dark-mode .volume-indicator {
+            color: #e0e0e0;
+        }
+        #fileInput {
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+        #fileInput::file-selector-button {
+            background: #ffffff;
+            color: #5a7a9a;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        #fileInput::file-selector-button:hover {
+            background: #f0f0f0;
+        }
+        #fileList {
+            list-style: none;
+            padding: 0;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .audio-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px;
+            background: #7a9abb;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            margin: 10px 0;
+            cursor: grab; /* ドラッグ可能な要素のカーソルを手のマークに設定 */
+            transition: background-color 0.3s, color 0.3s;
+            color: #1a2a3a;
+        }
+        body.dark-mode .audio-item {
+            background: #2c2c2c;
+            color: #e0e0e0;
+        }
+        .audio-item:active {
+            cursor: grabbing; /* ドラッグ中のカーソルを変更 */
+        }
+        .audio-item.selected {
+            background: #8aabcb; /* 選択された曲の背景色 */
+            box-shadow: 0 0 0 2px #ffffff;
+            color: #1a2a3a;
+        }
+        body.dark-mode .audio-item.selected {
+            background: #37474f;
+            box-shadow: 0 0 0 2px #00d4ff;
+        }
+        .button-container {
+            display: flex;
+            gap: 5px; /* ボタン間の間隔を調整 */
+        }
+        .audio-item button {
+            background: #ffffff;
+            color: #5a7a9a;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s, color 0.3s;
+        }
+        body.dark-mode .audio-item button {
+            background: #00d4ff;
+            color: #121212;
+        }
+        .audio-item button:hover {
+            background: #f0f0f0;
+        }
+        body.dark-mode .audio-item button:hover {
+            background: #00a8d8;
+        }
+        .audio-item button.delete {
+            background: #ff4757;
+            color: #ffffff !important;
+        }
+        body.dark-mode .audio-item button.delete {
+            background: #ff6b7a;
+            color: #ffffff !important;
+        }
+        .audio-item button.delete:hover {
+            background: #e63946;
+        }
+        body.dark-mode .audio-item button.delete:hover {
+            background: #d81159;
+        }
+        .audio-container {
+            display: flex;
+            justify-content: flex-end; /* 右寄せ */
+            align-items: center;
+            gap: 10px; /* コントローラーとボタン間の間隔を調整 */
+            width: 100%;
+        }
+        .volume-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+        /* --- ループボタンのON/OFFで色も切り替わるCSS --- */
+        .loop-toggle {
+            background: #ffffff;
+            color: #5a7a9a;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s, color 0.3s;
+        }
+        body.dark-mode .loop-toggle {
+            background: #00d4ff;
+            color: #121212;
+        }
+        .loop-toggle.loop-on {
+            background: #28a745 !important;
+            color: #fff !important;
+        }
+        body.dark-mode .loop-toggle.loop-on {
+            background: #43e36b !important;
+            color: #121212 !important;
+        }
+    </style>
+    <!-- SortableJSライブラリの読み込み -->
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.14.0/Sortable.min.js"></script>
+    <!-- JSZipライブラリの読み込み -->
+    <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="toggle-switch-container">
+                <div class="toggle-switch" id="darkModeToggle">
+                    <div class="toggle-track">
+                        <div class="toggle-thumb"></div>
+                    </div>
+                    <div class="toggle-label light-label">☀️</div>
+                    <div class="toggle-label dark-label">🌙</div>
+                </div>
+                <span class="toggle-status" id="modeStatus">ライトモード</span>
+            </div>
+            <h2>MP3-Player</h2>
+            <div id="volumeControl">
+                <div class="volume-indicator">音量: 100%</div>
+                <input type="range" id="globalVolumeSlider" class="volume-slider" min="0" max="100" value="100">
+            </div>
+        </div>
+        <input type="file" id="fileInput" accept="audio/*" multiple>
+        <ul id="fileList"></ul>
+    </div>
+    
+    <script>
+        'use strict';
+
+const darkModeToggle = document.getElementById('darkModeToggle');
+const globalVolumeSlider = document.getElementById('globalVolumeSlider');
+const volumeIndicator = document.querySelector('.volume-indicator');
+
+// グローバル変数の初期化
+let selectedAudios = [];
+let currentIndex = -1;
+const objectURLMap = new Map(); // URLとファイル情報を管理
+let isSecondSelectionMode = false;
+
+// ダークモード切り替え
+const modeStatus = document.getElementById('modeStatus');
+darkModeToggle.addEventListener('click', () => {
+    document.body.classList.toggle('dark-mode');
+    const isDarkMode = document.body.classList.contains('dark-mode');
+    modeStatus.textContent = isDarkMode ? 'ダークモード' : 'ライトモード';
+    darkModeToggle.blur();
+});
+
+// 初期状態の表示を設定
+if (!document.body.classList.contains('dark-mode')) {
+    modeStatus.textContent = 'ライトモード';
+}
+
+// グローバル音量スライダー
+globalVolumeSlider.addEventListener('input', () => {
+    const volume = globalVolumeSlider.value / 100;
+    volumeIndicator.textContent = `音量: ${Math.round(volume * 100)}%`;
+    document.querySelectorAll('audio').forEach(audio => {
+        audio.volume = volume;
+    });
+});
+
+// ファイル入力の変更イベントリスナー
+document.getElementById('fileInput').addEventListener('change', function(event) {
+    // ★ filter構文エラー修正
+    const files = Array.from(event.target.files).filter(file => file.type.startsWith('audio/'));
+    if (files.length === 0) return;
+    displayFileList(files);
+});
+
+/**
+ * ファイルリストを表示する関数
+ * @param {File[]} files - 表示するファイルの配列
+ */
+function displayFileList(files) {
+    const fileList = document.getElementById('fileList');
+    const currentCount = fileList.children.length;
+    
+    // 再生中の曲を保護するため、リストクリアは最初のファイル追加時のみ
+    const isFirstLoad = currentCount === 0;
+
+    files.forEach((file, index) => {
+        const listItem = document.createElement('li');
+        listItem.classList.add('audio-item');
+
+        const audio = document.createElement('audio');
+        const objectURL = URL.createObjectURL(file);
+        audio.src = objectURL;
+        objectURLMap.set(objectURL, { file, listItem }); // URL管理
+        audio.controls = true;
+        audio.preload = 'auto';
+
+        // ループボタン
+        const loopButton = createButton('ループOFF', () => {
+            audio.loop = !audio.loop;
+            loopButton.textContent = audio.loop ? 'ループON' : 'ループOFF';
+            loopButton.classList.toggle('loop-on', audio.loop);
+        }, 'loop-toggle');
+        // 初期状態はOFF
+
+        const buttonContainer = document.createElement('div');
+        buttonContainer.classList.add('button-container');
+
+        // 削除ボタン
+        const deleteButton = createButton('削除', () => {
+            if (confirm('このファイルを削除しますか？')) {
+                // ObjectURLを解放してメモリをクリア
+                if (objectURLMap.has(audio.src)) {
+                    URL.revokeObjectURL(audio.src);
+                    objectURLMap.delete(audio.src);
+                }
+                
+                listItem.remove();
+                updateListNumbers();
+                
+                // 選択状態の更新
+                if (listItem.classList.contains('selected')) {
+                    selectedAudios = selectedAudios.filter(a => a !== audio);
+                    if (selectedAudios.length === 0) {
+                        currentIndex = -1;
+                    }
+                }
+            }
+        }, 'delete');
+        buttonContainer.appendChild(loopButton);
+        buttonContainer.appendChild(deleteButton);
+
+        const audioContainer = document.createElement('div');
+        audioContainer.classList.add('audio-container');
+        audioContainer.appendChild(audio);
+        audioContainer.appendChild(buttonContainer);
+
+        listItem.appendChild(document.createTextNode(`${currentCount + index + 1}. ${file.name}`));
+        listItem.appendChild(audioContainer);
+        fileList.appendChild(listItem);
+    });
+    updateListNumbers();
+
+    // ファイルが存在する場合、最初に選択状態がない時のみ自動選択
+    if (fileList.children.length > 0) {
+        // 既存の選択を保持し、選択がない場合のみ最初のファイルを選択
+        if (selectedAudios.length === 0) {
+            currentIndex = 0;
+            fileList.children[0].classList.add('selected');
+            selectedAudios = [fileList.children[0].querySelector('audio')];
+        } else if (currentIndex < 0) {
+            currentIndex = 0;
+        }
+    } else {
+        currentIndex = -1;
+        selectedAudios = [];
+    }
+}
+
+/**
+ * ボタンを作成する関数
+ * @param {string} text - ボタンのテキスト
+ * @param {Function} onClick - ボタンがクリックされたときのコールバック関数
+ * @param {string} [additionalClass] - 追加するクラス名（オプション）
+ * @returns {HTMLButtonElement} - 作成されたボタン要素
+ */
+function createButton(text, onClick, additionalClass = '') {
+    const button = document.createElement('button');
+    button.textContent = text;
+    button.type = 'button';
+    button.addEventListener('click', onClick);
+    if (additionalClass) {
+        button.classList.add(additionalClass);
+    }
+    return button;
+}
+
+// リスト番号を更新する関数
+function updateListNumbers() {
+    const fileList = document.getElementById('fileList');
+    Array.from(fileList.children).forEach((item, index) => {
+        const textNode = item.childNodes[0];
+        if (textNode && textNode.nodeType === Node.TEXT_NODE) {
+            const text = textNode.textContent.split('. ').slice(1).join('. ');
+            textNode.textContent = `${index + 1}. ${text}`;
+        }
+    });
+}
+
+// キーボード操作で選択を変更するイベントリスナー
+document.addEventListener('keydown', (event) => {
+    if (event.target.tagName === 'INPUT' || event.target.tagName === 'BUTTON' || event.target.tagName === 'TEXTAREA') {
+        return;
+    }
+
+    const fileList = document.getElementById('fileList');
+    const items = Array.from(fileList.children);
+    if (items.length === 0) return;
+
+    // currentIndexの初期化（メモリ安全性確保）
+    if (currentIndex < 0 || currentIndex >= items.length) {
+        currentIndex = 0;
+        items.forEach(item => item.classList.remove('selected'));
+        if (items[0]) {
+            items[0].classList.add('selected');
+            const audio = items[0].querySelector('audio');
+            if (audio && audio.src) {
+                selectedAudios = [audio];
+            }
+        }
+    }
+
+    // 上キーで選択を移動（Shiftで複数選択対応）
+    if (event.key === 'ArrowUp') {
+        if (event.shiftKey && currentIndex > 0 && selectedAudios.length < 2) {
+            currentIndex--;
+            items[currentIndex].classList.add('selected');
+            items[currentIndex].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            const audio = items[currentIndex].querySelector('audio');
+            if (!selectedAudios.includes(audio)) {
+                selectedAudios.push(audio);
+            }
+        } else if (!event.shiftKey && currentIndex > 0) {
+            items[currentIndex].classList.remove('selected');
+            currentIndex--;
+            items.forEach(item => item.classList.remove('selected'));
+            items[currentIndex].classList.add('selected');
+            items[currentIndex].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            selectedAudios = [items[currentIndex].querySelector('audio')];
+        }
+        event.preventDefault();
+        return;
+    }
+    // 下キーで選択を移動（Shiftで複数選択対応）
+    if (event.key === 'ArrowDown') {
+        if (event.shiftKey && currentIndex < items.length - 1 && selectedAudios.length < 2) {
+            currentIndex++;
+            items[currentIndex].classList.add('selected');
+            items[currentIndex].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            const audio = items[currentIndex].querySelector('audio');
+            if (!selectedAudios.includes(audio)) {
+                selectedAudios.push(audio);
+            }
+        } else if (!event.shiftKey && currentIndex < items.length - 1) {
+            items[currentIndex].classList.remove('selected');
+            currentIndex++;
+            items.forEach(item => item.classList.remove('selected'));
+            items[currentIndex].classList.add('selected');
+            items[currentIndex].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            selectedAudios = [items[currentIndex].querySelector('audio')];
+        }
+        event.preventDefault();
+        return;
+    }
+
+    // Shift+左矢印キー：選択中または再生中の曲を先頭に戻して停止
+    if (event.key === 'ArrowLeft' && event.shiftKey) {
+        // 選択中
+        selectedAudios.forEach(audio => {
+            audio.pause();
+            audio.currentTime = 0;
+        });
+        // 再生中
+        const playingAudios = Array.from(document.querySelectorAll('audio')).filter(a => !a.paused && !a.ended);
+        playingAudios.forEach(audio => {
+            audio.pause();
+            audio.currentTime = 0;
+        });
+        event.preventDefault();
+        return;
+    }
+
+    // Enterキー：選択した曲の頭出し即時再生（フェードなし）
+    if (event.key === 'Enter' && !event.shiftKey) {
+        selectedAudios.forEach(audio => {
+            audio.pause();
+            audio.currentTime = 0;
+            audio.volume = globalVolumeSlider.value / 100;
+            audio.play();
+        });
+        event.preventDefault();
+        return;
+    }
+
+    // Shift+右矢印キー：選択した曲の頭から2秒かけてフェードイン再生
+    if (event.key === 'ArrowRight' && event.shiftKey) {
+        selectedAudios.forEach(audio => {
+            audio.pause();
+            audio.currentTime = 0;
+            const originalVolume = globalVolumeSlider.value / 100;
+            audio.volume = 0;
+            audio.play();
+            let fadeTime = 0;
+            const fadeDuration = 2000;
+            const step = 50;
+            const volumeStep = originalVolume / (fadeDuration / step);
+            const fadeIn = setInterval(() => {
+                fadeTime += step;
+                audio.volume = Math.min(originalVolume, audio.volume + volumeStep);
+                if (fadeTime >= fadeDuration || audio.volume >= originalVolume) {
+                    audio.volume = originalVolume;
+                    clearInterval(fadeIn);
+                }
+            }, step);
+        });
+        event.preventDefault();
+        return;
+    }
+
+    // Shift+Enterキー：曲の入れ替え再生（フェードアウト・フェードイン）
+    if (event.key === 'Enter' && event.shiftKey) {
+        const playingAudios = Array.from(document.querySelectorAll('audio')).filter(a => !a.paused && !a.ended);
+        if (playingAudios.length === 0) return;
+
+        let nextIndex = currentIndex + 1;
+        if (nextIndex >= items.length) nextIndex = 0;
+
+        const nextAudio = items[nextIndex]?.querySelector('audio');
+        if (!nextAudio) return;
+
+        // 1. フェードアウト（3秒）
+        playingAudios.forEach(audio => {
+            const originalVolume = audio.volume;
+            let fadeTime = 0;
+            const fadeDuration = 3000;
+            const step = 50;
+            const volumeStep = originalVolume / (fadeDuration / step);
+            const fadeOut = setInterval(() => {
+                fadeTime += step;
+                audio.volume = Math.max(0, audio.volume - volumeStep);
+                if (fadeTime >= fadeDuration || audio.volume <= 0.01) {
+                    audio.volume = 0;
+                    audio.pause();
+                    // グローバルボリュームのリセット（ボリュームロック解除）
+                    audio.volume = globalVolumeSlider.value / 100;
+                    clearInterval(fadeOut);
+                }
+            }, step);
+        });
+
+        // 2. 2秒後に次の曲を1秒フェードインで再生（オーバーラップ）
+        setTimeout(() => {
+            items.forEach(item => item.classList.remove('selected'));
+            items[nextIndex].classList.add('selected');
+            selectedAudios = [nextAudio];
+            currentIndex = nextIndex;
+
+            nextAudio.pause();
+            nextAudio.currentTime = 0;
+            const originalVolume = globalVolumeSlider.value / 100;
+            nextAudio.volume = 0;
+            nextAudio.play();
+            let fadeTime = 0;
+            const fadeDuration = 1000;
+            const step = 50;
+            const volumeStep = originalVolume / (fadeDuration / step);
+            const fadeIn = setInterval(() => {
+                fadeTime += step;
+                nextAudio.volume = Math.min(originalVolume, nextAudio.volume + volumeStep);
+                if (fadeTime >= fadeDuration || nextAudio.volume >= originalVolume) {
+                    nextAudio.volume = originalVolume;
+                    clearInterval(fadeIn);
+                }
+            }, step);
+        }, 2000);
+
+        event.preventDefault();
+        return;
+    }
+
+    // 左矢印キーで停止
+    if (event.key === 'ArrowLeft' && !event.shiftKey) {
+        selectedAudios.forEach(audio => {
+            audio.pause();
+        });
+        event.preventDefault();
+        return;
+    }
+
+    // 右矢印キーで再生
+    if (event.key === 'ArrowRight' && !event.shiftKey) {
+        selectedAudios.forEach(audio => {
+            audio.play();
+        });
+        event.preventDefault();
+        return;
+    }
+});
+
+// --- 曲リストのドラッグ＆ドロップ（並び替え）機能の修正・追加 ---
+
+// SortableJSの初期化（ZIP保存ボタン削除後も有効）
+new Sortable(document.getElementById('fileList'), {
+    animation: 150,
+    onEnd: function () {
+        updateListNumbers();
+
+        // 並び替え後、選択状態を維持
+        const fileList = document.getElementById('fileList');
+        const items = Array.from(fileList.children);
+        if (selectedAudios.length > 0) {
+            const selectedSrcs = selectedAudios.map(audio => audio.src);
+            selectedAudios = [];
+            items.forEach(item => {
+                const audio = item.querySelector('audio');
+                if (selectedSrcs.includes(audio.src)) {
+                    item.classList.add('selected');
+                    selectedAudios.push(audio);
+                } else {
+                    item.classList.remove('selected');
+                }
+            });
+            if (selectedAudios.length > 0) {
+                currentIndex = items.findIndex(item => item.classList.contains('selected'));
+            }
+        }
+    }
+});
+    </script>
+</body>
+</html>
