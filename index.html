@@ -1,66 +1,700 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>リンク管理ホームページ</title>
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SYTP - 裾野ユースシアタープロジェクト</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Noto Sans JP', sans-serif;
+      line-height: 1.8;
+      color: #333;
+      background: #f9f9f9;
+    }
+
+    /* ==================== HEADER ==================== */
+    header {
+      background: linear-gradient(135deg, #1a0033 0%, #2d1b4e 100%);
+      color: #fff;
+      padding: 20px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 30px;
+    }
+
+    .header-logo-section {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      flex: 1;
+    }
+
+    .header-logo {
+      width: 70px;
+      height: 70px;
+      border-radius: 10px;
+      border: 3px solid #d4af37;
+      object-fit: cover;
+      box-shadow: 0 0 15px rgba(212, 175, 55, 0.3);
+    }
+
+    .header-title h1 {
+      font-family: 'Cinzel', serif;
+      font-size: 2.5rem;
+      margin: 0;
+      letter-spacing: 3px;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    }
+
+    .header-title .subtitle {
+      font-size: 0.9rem;
+      color: #d4af37;
+      margin: 5px 0 0;
+      font-weight: 500;
+    }
+
+    nav {
+      display: flex;
+      gap: 25px;
+    }
+
+    nav a {
+      color: #fff;
+      text-decoration: none;
+      font-size: 0.95rem;
+      font-weight: 500;
+      transition: color 0.3s ease;
+      border-bottom: 2px solid transparent;
+      padding-bottom: 5px;
+    }
+
+    nav a:hover {
+      color: #d4af37;
+      border-bottom-color: #d4af37;
+    }
+
+    /* ==================== HERO SECTION ==================== */
+    .hero {
+      background: linear-gradient(rgba(26, 0, 51, 0.7), rgba(45, 27, 78, 0.7)), 
+                  url('https://via.placeholder.com/1920x1080') center/cover;
+      color: #fff;
+      padding: 100px 20px;
+      text-align: center;
+    }
+
+    .hero-content {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .hero h2 {
+      font-family: 'Cinzel', serif;
+      font-size: 3rem;
+      margin-bottom: 20px;
+      text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.6);
+    }
+
+    .hero p {
+      font-size: 1.2rem;
+      margin-bottom: 30px;
+      color: #ddd;
+    }
+
+    .cta-buttons {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      padding: 12px 30px;
+      font-size: 1rem;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-weight: 600;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .btn-primary {
+      background: #d4af37;
+      color: #1a0033;
+    }
+
+    .btn-primary:hover {
+      background: #e5c158;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(212, 175, 55, 0.4);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: #fff;
+      border: 2px solid #d4af37;
+    }
+
+    .btn-secondary:hover {
+      background: #d4af37;
+      color: #1a0033;
+    }
+
+    /* ==================== MAIN CONTENT ==================== */
+    main {
+      max-width: 1200px;
+      margin: 60px auto;
+      padding: 0 20px;
+    }
+
+    section {
+      margin-bottom: 60px;
+    }
+
+    h2 {
+      font-family: 'Cinzel', serif;
+      font-size: 2rem;
+      color: #1a0033;
+      margin-bottom: 30px;
+      padding-bottom: 15px;
+      border-bottom: 3px solid #d4af37;
+    }
+
+    h3 {
+      font-family: 'Cinzel', serif;
+      font-size: 1.3rem;
+      color: #2d1b4e;
+      margin-top: 0;
+    }
+
+    /* ==================== ABOUT SECTION ==================== */
+    .about-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      align-items: center;
+    }
+
+    .about-text p {
+      margin-bottom: 15px;
+      color: #555;
+      line-height: 1.9;
+    }
+
+    .about-features {
+      list-style: none;
+    }
+
+    .about-features li {
+      padding: 10px 0;
+      padding-left: 30px;
+      position: relative;
+      color: #555;
+    }
+
+    .about-features li:before {
+      content: "🎭";
+      position: absolute;
+      left: 0;
+    }
+
+    /* ==================== NEWS/EVENTS SECTION ==================== */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 25px;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .card-header {
+      background: linear-gradient(135deg, #2d1b4e 0%, #1a0033 100%);
+      color: #d4af37;
+      padding: 20px;
+      min-height: 60px;
+      display: flex;
+      align-items: center;
+    }
+
+    .card-header h3 {
+      color: #d4af37;
+      margin: 0;
+    }
+
+    .card-body {
+      padding: 20px;
+    }
+
+    .card-body p {
+      color: #666;
+      margin-bottom: 15px;
+    }
+
+    .card-date {
+      font-size: 0.85rem;
+      color: #999;
+      font-weight: 600;
+    }
+
+    /* ==================== SCHEDULE/TIMELINE ==================== */
+    .timeline {
+      position: relative;
+      padding: 20px 0;
+    }
+
+    .timeline-item {
+      display: flex;
+      margin-bottom: 30px;
+      position: relative;
+    }
+
+    .timeline-marker {
+      width: 40px;
+      height: 40px;
+      background: #d4af37;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #1a0033;
+      font-weight: bold;
+      flex-shrink: 0;
+      margin-right: 30px;
+    }
+
+    .timeline-content {
+      flex: 1;
+      background: #fff;
+      padding: 20px;
+      border-radius: 5px;
+      border-left: 3px solid #d4af37;
+    }
+
+    .timeline-content h4 {
+      color: #1a0033;
+      margin-bottom: 10px;
+    }
+
+    .timeline-content p {
+      color: #666;
+      margin: 0;
+    }
+
+    /* ==================== MEMBERS SECTION ==================== */
+    .members-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+    }
+
+    .member-card {
+      text-align: center;
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .member-card .role {
+      color: #d4af37;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 5px;
+    }
+
+    .member-card h4 {
+      color: #1a0033;
+      margin: 0;
+    }
+
+    /* ==================== CONTACT SECTION ==================== */
+    .contact-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+    }
+
+    .contact-info {
+      background: #fff;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .contact-info h3 {
+      color: #1a0033;
+      margin-bottom: 20px;
+    }
+
+    .contact-item {
+      margin-bottom: 15px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .contact-item:last-child {
+      border-bottom: none;
+    }
+
+    .contact-label {
+      color: #999;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
+    .contact-value {
+      color: #333;
+      margin-top: 5px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      color: #333;
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      font-family: 'Noto Sans JP', sans-serif;
+      font-size: 1rem;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+
+    input:focus,
+    textarea:focus {
+      outline: none;
+      border-color: #d4af37;
+      box-shadow: 0 0 5px rgba(212, 175, 55, 0.3);
+    }
+
+    /* ==================== SOCIAL SECTION ==================== */
+    .social-links {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      padding: 30px 0;
+    }
+
+    .social-links a {
+      width: 45px;
+      height: 45px;
+      background: linear-gradient(135deg, #2d1b4e 0%, #1a0033 100%);
+      color: #d4af37;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      font-size: 1.2rem;
+      transition: all 0.3s ease;
+    }
+
+    .social-links a:hover {
+      background: #d4af37;
+      color: #1a0033;
+      transform: translateY(-3px);
+    }
+
+    /* ==================== FOOTER ==================== */
+    footer {
+      background: linear-gradient(135deg, #1a0033 0%, #2d1b4e 100%);
+      color: #fff;
+      text-align: center;
+      padding: 30px 20px;
+      margin-top: 60px;
+    }
+
+    footer p {
+      margin: 5px 0;
+      color: #ccc;
+    }
+
+    .footer-credit {
+      font-size: 0.85rem;
+      margin-top: 15px;
+      color: #999;
+    }
+
+    /* ==================== RESPONSIVE ==================== */
+    @media (max-width: 768px) {
+      .header-container {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      nav {
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+
+      .hero h2 {
+        font-size: 2rem;
+      }
+
+      .about-container,
+      .contact-container {
+        grid-template-columns: 1fr;
+      }
+
+      h2 {
+        font-size: 1.5rem;
+      }
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <!-- ヘッダー -->
-        <header class="header">
-            <h1>📑 リンク管理ホームページ</h1>
-            <p class="subtitle">よく使うサイトやファイルを一元管理</p>
-        </header>
+  <!-- ==================== HEADER ==================== -->
+  <header>
+    <div class="header-container">
+      <div class="header-logo-section">
+        <div style="width: 70px; height: 70px; border-radius: 10px; border: 3px solid #d4af37; background: #d4af37; display: flex; align-items: center; justify-content: center; color: #1a0033; font-weight: bold; font-size: 2rem;">🎭</div>
+        <div class="header-title">
+          <h1>SYTP</h1>
+          <p class="subtitle">裾野ユースシアタープロジェクト</p>
+        </div>
+      </div>
+      <nav>
+        <a href="#about">About</a>
+        <a href="#news">News</a>
+        <a href="#schedule">Schedule</a>
+        <a href="#members">Members</a>
+        <a href="#contact">Contact</a>
+      </nav>
+    </div>
+  </header>
 
-        <!-- 検索バー -->
-        <div class="search-bar">
-            <input 
-                type="text" 
-                id="searchInput" 
-                placeholder="リンクを検索..."
-                class="search-input"
-            >
+  <!-- ==================== HERO SECTION ==================== -->
+  <section class="hero">
+    <div class="hero-content">
+      <h2>青少年と舞台をつなぐ</h2>
+      <p>演劇を通じた地域文化振興と青少年育成</p>
+      <div class="cta-buttons">
+        <button class="btn btn-primary" onclick="document.getElementById('contact').scrollIntoView({behavior: 'smooth'})">
+          お問い合わせ
+        </button>
+        <a href="#news" class="btn btn-secondary">最新情報</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== MAIN CONTENT ==================== -->
+  <main>
+    <!-- ABOUT SECTION -->
+    <section id="about">
+      <h2>About SYTP</h2>
+      <div class="about-container">
+        <div class="about-text">
+          <p>SYTPは裾野市を中心とした青少年演劇クラブとして活動しています。演劇を通じた自己表現、コミュニケーション能力の向上、そして地域文化の振興を目指しています。</p>
+          <p>初心者から経験者まで、すべての世代が活躍できるステージを提供しており、公演活動を通じて多くの人と繋がる機会を創出しています。</p>
+        </div>
+        <div>
+          <ul class="about-features">
+            <li>初心者大歓迎</li>
+            <li>年3回以上の公演</li>
+            <li>技術研修・指導</li>
+            <li>地域イベント参加</li>
+            <li>全年代が参加可能</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- NEWS SECTION -->
+    <section id="news">
+      <h2>News & Events</h2>
+      <div class="card-grid">
+        <div class="card">
+          <div class="card-header">
+            <h3>新作公演決定</h3>
+          </div>
+          <div class="card-body">
+            <p class="card-date">2026年夏</p>
+            <p>今年の夏は新作を上演予定です。詳細は後日発表いたします。</p>
+          </div>
         </div>
 
-        <!-- リンク一覧 -->
-        <main class="main-content">
-            <div id="linkContainer" class="link-container">
-                <!-- カテゴリごとのリンクがここに表示されます -->
+        <div class="card">
+          <div class="card-header">
+            <h3>チケット販売開始</h3>
+          </div>
+          <div class="card-body">
+            <p class="card-date">随時更新</p>
+            <p>各公演のチケット販売状況や割引情報をお知らせします。</p>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3>メンバー募集中</h3>
+          </div>
+          <div class="card-body">
+            <p class="card-date">通年募集</p>
+            <p>演劇に興味のある皆さんの参加をお待ちしています。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SCHEDULE SECTION -->
+    <section id="schedule">
+      <h2>Schedule</h2>
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="timeline-marker">1</div>
+          <div class="timeline-content">
+            <h4>春公演</h4>
+            <p>地域イベントでの初夏の公演。初心者向けの作品を予定。</p>
+          </div>
+        </div>
+
+        <div class="timeline-item">
+          <div class="timeline-marker">2</div>
+          <div class="timeline-content">
+            <h4>夏集中稽古</h4>
+            <p>7月～8月の集中演技トレーニング。技能向上のための重点期間。</p>
+          </div>
+        </div>
+
+        <div class="timeline-item">
+          <div class="timeline-marker">3</div>
+          <div class="timeline-content">
+            <h4>秋公演</h4>
+            <p>年間の最大規模公演。全メンバーが参加する大規模作品。</p>
+          </div>
+        </div>
+
+        <div class="timeline-item">
+          <div class="timeline-marker">4</div>
+          <div class="timeline-content">
+            <h4>冬の特別企画</h4>
+            <p>クリスマス時期の特別イベント。地域との交流企画も予定。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- MEMBERS SECTION -->
+    <section id="members">
+      <h2>Our Members</h2>
+      <div class="members-grid">
+        <div class="member-card">
+          <div class="role">代表</div>
+          <h4>メンバー名</h4>
+        </div>
+
+        <div class="member-card">
+          <div class="role">副代表</div>
+          <h4>メンバー名</h4>
+        </div>
+
+        <div class="member-card">
+          <div class="role">スタッフ</div>
+          <h4>メンバー名</h4>
+        </div>
+
+        <div class="member-card">
+          <div class="role">スタッフ</div>
+          <h4>メンバー名</h4>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACT SECTION -->
+    <section id="contact">
+      <h2>Contact</h2>
+      <div class="contact-container">
+        <div class="contact-info">
+          <h3>お問い合わせ情報</h3>
+          <div class="contact-item">
+            <div class="contact-label">メール</div>
+            <div class="contact-value">info@sytp-example.com</div>
+          </div>
+          <div class="contact-item">
+            <div class="contact-label">電話</div>
+            <div class="contact-value">090-XXXX-XXXX</div>
+          </div>
+          <div class="contact-item">
+            <div class="contact-label">場所</div>
+            <div class="contact-value">裾野市〇〇〇〇</div>
+          </div>
+          <div class="social-links">
+            <a href="#" title="Twitter">𝕏</a>
+            <a href="#" title="Instagram">📷</a>
+            <a href="#" title="Facebook">f</a>
+          </div>
+        </div>
+
+        <div>
+          <h3>お問い合わせフォーム</h3>
+          <form>
+            <div class="form-group">
+              <label>お名前 *</label>
+              <input type="text" required>
             </div>
-        </main>
+            <div class="form-group">
+              <label>メールアドレス *</label>
+              <input type="email" required>
+            </div>
+            <div class="form-group">
+              <label>お問い合わせ内容 *</label>
+              <textarea required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">送信</button>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
 
-        <!-- リンク追加フォーム -->
-        <section class="add-link-section">
-            <h2>新しいリンクを追加</h2>
-            <form id="addLinkForm" class="add-link-form">
-                <div class="form-group">
-                    <label for="category">カテゴリ:</label>
-                    <input type="text" id="category" placeholder="例: 仕事, 学習" required>
-                </div>
-                <div class="form-group">
-                    <label for="title">タイトル:</label>
-                    <input type="text" id="title" placeholder="例: GitHub" required>
-                </div>
-                <div class="form-group">
-                    <label for="url">URL:</label>
-                    <input type="url" id="url" placeholder="https://example.com" required>
-                </div>
-                <div class="form-group">
-                    <label for="description">説明（オプション）:</label>
-                    <input type="text" id="description" placeholder="このリンクについての説明">
-                </div>
-                <button type="submit" class="btn-add">追加</button>
-            </form>
-        </section>
-
-        <!-- フッター -->
-        <footer class="footer">
-            <p>&copy; 2026 リンク管理ホームページ</p>
-        </footer>
-    </div>
-
-    <script src="script.js"></script>
+  <!-- ==================== FOOTER ==================== -->
+  <footer>
+    <p>&copy; 2026 SYTP - 裾野ユースシアタープロジェクト</p>
+    <p>All rights reserved.</p>
+    <div class="footer-credit">Designed & Developed for SYTP</div>
+  </footer>
 </body>
 </html>
